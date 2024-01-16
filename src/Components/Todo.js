@@ -12,18 +12,46 @@ export default function Todo() {
             return [];
         }
     }
+    // Clear local storage
+    // localStorage.clear();
 
 
     const [inputData, setInputData] = useState("")
     // const [items, setItems] = useState([])
     const [items, setItems] = useState(getlocalStorage())
     const [storage, setStorage] = useState()
-
+    const [editedItem, setEditedItem] = useState("")
+    const [toggle, setToggle] = useState(false)
 
     // Adding New Item....
     const addItems = () => {
+
         if (!inputData) {
             alert("Add items")
+        }
+
+        else if (inputData && toggle) {
+
+            console.log("Enterd in else if");
+
+            setItems(
+                items.map((currentElem) => {
+                    console.log(currentElem.id);
+
+                    console.log("Enterd in else if set items");
+
+                    if (currentElem.id === editedItem) {
+                        console.log("Enterd if condition");
+                        return { ...currentElem, name: inputData }
+                    }
+                    else {
+                        console.log("Enterd in else condition");
+                        return currentElem
+                    }
+                })
+            )
+            setInputData("")
+            setToggle(false)
         }
         else {
 
@@ -53,6 +81,21 @@ export default function Todo() {
         setItems([])
     }
 
+    // edit items
+
+    const editItems = (index) => {
+        const edited_updated_item = items.find((currentElem) => {
+            return currentElem.id === index;
+        })
+
+        setInputData(edited_updated_item.name)
+        console.log(index);
+
+        setEditedItem(index)
+
+        setToggle(true)
+    }
+
     useEffect(() => {
         localStorage.setItem("Todo_list", JSON.stringify(items))
     }, [items])
@@ -78,12 +121,16 @@ export default function Todo() {
                         <div className="input-text">
 
                             <input type="text" name="" id="" placeholder='✍ Add Your note here' value={inputData} onChange={(event) => { setInputData(event.target.value) }} />
-                            <i className="fas fa-plus" onClick={addItems}></i>
+                            {
+                                toggle ? <i className="far fa-edit" onClick={addItems}></i> : <i className="fas fa-plus" onClick={addItems}></i>
+                            }
+
                         </div>
 
                         <div className="items-list">
 
                             {
+
                                 items.map((currentElem) => {
                                     return (
                                         < div className="items" key={currentElem.id} >
@@ -96,7 +143,7 @@ export default function Todo() {
                                             <div className="icons">
 
                                                 <div className="edit-icon">
-                                                    <i className="far fa-edit"></i>
+                                                    <i className="far fa-edit" onClick={() => { editItems(currentElem.id) }}></i>
                                                 </div>
 
                                                 <div className="delete-icon">
