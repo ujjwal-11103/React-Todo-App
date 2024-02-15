@@ -96,6 +96,8 @@ export default function Todo() {
         setToggle(true)
     }
 
+    // Local storge 
+
     useEffect(() => {
         localStorage.setItem("Todo_list", JSON.stringify(items))
     }, [items])
